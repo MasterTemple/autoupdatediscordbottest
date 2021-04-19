@@ -1,0 +1,3 @@
+# autoupdatediscordbottest
+
+test
