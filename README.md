@@ -1,3 +1,5 @@
 # autoupdatediscordbottest
 
 test
+
+test2
