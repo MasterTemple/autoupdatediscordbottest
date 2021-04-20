@@ -5,11 +5,11 @@ module.exports = {
     use: `update`,
     example: [`update `],
     execute(message, args) {
-        message.channel.send('Updating')
+        //message.channel.send('Updating')
 
         const { exec } = require("child_process");
         try{
-            exec("git remote add auto https://github.com/MasterTemple/autoupdatediscordbottest.git", (error, stdout, stderr) => {
+            exec("git remote add auto https://github.com/MasterTemple/autoupdatediscordbottest.git master", (error, stdout, stderr) => {
                 if (error) {
                     //console.log(`~error: ${error.message}`);
                     return;
@@ -21,7 +21,7 @@ module.exports = {
             });
         }catch{}
 
-        exec("git remote update", (error, stdout, stderr) => {
+        exec("git pull", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -30,8 +30,11 @@ module.exports = {
                 console.log(`stderr: ${stderr}`);
                 return;
             }
-            message.channel.send('Update Complete.')
         });
+
+        message.channel.send('Update Complete.')
+
+
 
     }
 }
