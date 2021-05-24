@@ -5,7 +5,6 @@ client.commands = new Discord.Collection();
 client.mythranCommands = new Discord.Collection();
 client.contributorCommands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-var picture_data = require('./src/picture_data.json')
 
 
 const {prefix, token, startupStatus, botInfo, mythran, contributor, cache_channel_id, approved_channel_id} = require('./config.json');
@@ -27,6 +26,19 @@ client.once('ready', () => {
 })
 
 client.on('messageReactionAdd', (reaction, user) => {
+    if(reaction.emoji.toString() === '✅' && user.id !== client.user.id){
+        //console.log(`approved!`)
+        //console.log(reaction.message.embeds)
+        //console.log(reaction.message.embeds.author.name)
+        let embedFile = require('./functions/embedTemplate.js')
+
+        reaction.message.embeds.forEach(a => {
+            let embed = embedFile.execute(a.author.name, a.author.iconURL, a.image.url)
+            client.channels.cache.get(approved_channel_id).send(embed);
+        })
+    }
+
+
 })
 
 client.on('message', message => {
@@ -42,29 +54,18 @@ client.on('message', message => {
 
     if(message.attachments.size > 0) {
         try {
-            // let imageFile = require('./commands/download_image.js')
-            // let embedFile = require('./functions/embedTemplate.js')
+            let imageFile = require('./commands/download_image.js')
+            let embedFile = require('./functions/embedTemplate.js')
             //message.channel.send(message.author.displayAvatarURL())
             message.attachments.forEach( async a => {
-                // imageFile.execute(a.url, `./images/${a.id}.png`)
-                // let embed = embedFile.execute(message.author.username, message.author.displayAvatarURL(), a.url)
+                imageFile.execute(a.url, `./images/${a.id}.png`)
+                let embed = embedFile.execute(message.author.username, message.author.displayAvatarURL(), a.url)
                 //message.channel.send(embed)
-                // await client.channels.cache.get(cache_channel_id).send(embed).then( () => {
-                //     message.delete()
-                // })
-                //console.log(a)
-                picture_data.push({
-                    id: a.id,
-                    name: a.name,
-                    url: a.url
+                await client.channels.cache.get(cache_channel_id).send(embed).then( () => {
+                    message.delete()
                 })
 
             })
-            fs.writeFile ("./src/picture_data.json", JSON.stringify(picture_data, null, 2), function(err) {
-                    if (err) throw err;
-                    console.log('data updated');
-                }
-            );
 
 
 
